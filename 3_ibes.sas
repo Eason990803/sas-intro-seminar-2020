@@ -83,12 +83,22 @@ set getf_4;
 if missing(ibes_ticker) eq 0;
 run;
 
-/* lets use iclink macro (creates a permno-ibes ticker linktable) */
+/* lets use iclink macro (creates a permno-ibes ticker linktable) 
+copy/paste this code:
+https://wrds-www.wharton.upenn.edu/pages/support/research-wrds/macros/wrds-macro-iclink/
 
-/* let's assign a library where to store the output */
-libname myLib "~/2020_uf";
+copy it into a new sas file (or existing one) and press F3 to run it
 
-/* invoke it (note: run the macro code first) */
+*/
+/* let's assign a library where to store the output
+  make sure this folder exists
+ */
+libname myLib "~/today";
+
+/* invoke it (note: run the macro code first) 
+you can also run: %iclink;
+this will create work.iclink (so in the work library)
+*/
 %iclink(outset=myLIb.iclink);
 
 /* inspect iclink*/
@@ -97,7 +107,7 @@ libname myLib "~/2020_uf";
 proc sql;
 	create table getf_5 as 
 	select a.*, b.ticker as iclink_ibes, b.score as iclink_score
-	from getf_4 a left join myLib.iclink b
+	from getf_4 a left join myLib.iclink b /* or work.iclink if it is in the work folder */
 	on a.permno eq b.permno
 	and missing(b.ticker) eq 0;
 quit;
